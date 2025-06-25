@@ -5,18 +5,32 @@
 
 <div class="row">
     {% for product in products %}
-
-    <div class="card" style="width: 18rem;">
-        <img src="{{ product.image_url }}" class="card-img-top img-fluid" alt="{{ product.name }}" style="max-height: 200px; object-fit: cover;">
+    <div class="card m-3" style="width: 18rem;">
+        <img src="{{ product.image_url }}" class="card-img-top img-fluid" alt="{{ product.name }}"
+             style="max-height: 200px; object-fit: cover;">
         <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">Price: ${{ product.price }}</p>
-            <p class="card-text">Stock: {{ product.stock }}</p>
-            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to cart</a>
+            <p><strong>Price:</strong> {{ product.formatted_price }} {{ product.get_unit_display }}</p>
+            <p class="card-text"><strong>Stock:</strong> {{ product.stock }}</p>
+
+            <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <label for="quantity_{{ product.id }}">Quantity:</label>
+
+                {% if product.unit == 'lb' %}
+                <input type="number" name="quantity" step="0.1" min="0.1" value="1" id="quantity_{{ product.id }}">
+                {% else %}
+                <input type="number" name="quantity" step="1" min="1" value="1" id="quantity_{{ product.id }}">
+                {% endif %}
+
+                <button type="submit" class="btn btn-success mt-2">Add to Cart</button>
+            </form>
         </div>
     </div>
-
     {% endfor %}
 </div>
 
 {% endblock %}
+
+
+
